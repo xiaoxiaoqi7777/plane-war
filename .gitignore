@@ -18,3 +18,6 @@ x64/
 # 系统文件
 Thumbs.db
 Desktop.ini
+
+# VS Code 本地配置（编译器路径因机器而异）
+.vscode/
