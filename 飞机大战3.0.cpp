@@ -11,6 +11,10 @@ Description:Something about C Example
 #include<time.h>
 #include<string>
 using namespace std;
+
+#ifdef _MSC_VER
+#pragma execution_character_set("utf-8")   // 源码为 UTF-8，字符串字面量按 UTF-8 编码
+#endif
  
 /*=============== all the structures ===============*/
  
@@ -134,7 +138,8 @@ void drawPlaying()
 //在[a, b)之间产生一个随机整数
 int random(int a, int b)
 {
-    int c=(rand() % (a-b))+ a;
+    if(b <= a) return a;              // 避免 b-a 为 0 或负数导致取模异常
+    int c=(rand() % (b-a))+ a;
     return c;
 }
  
@@ -152,7 +157,7 @@ bool  judgeCoordInFrame(Frame frame, COORD spot)
     if(spot.X>=frame.position[0].X)
         if(spot.X<=frame.position[1].X)
             if(spot.Y>=frame.position[0].Y)
-                if(spot.Y<=frame.position[0].Y)
+                if(spot.Y<=frame.position[1].Y)
                     return true;
     return false;
 }
@@ -541,18 +546,18 @@ void Game::Shoot()
  /*得分和等级的评定设计*/ 
 void Game::printScore()
 {
-    if(score == 120 && flag_rank == 0)
+    if(score >= 120 && flag_rank == 0)
     {
         rank -= 3;
         flag_rank = 1;
     }
- 
-    else if( score == 360 && flag_rank == 1)
+
+    else if( score >= 360 && flag_rank == 1)
     {
         rank -= 5;
         flag_rank = 2;
     }
-    else if( score == 480 && flag_rank == 2)
+    else if( score >= 480 && flag_rank == 2)
     {
         rank -= 5;
         flag_rank = 3;
@@ -689,6 +694,7 @@ as:
 int main()
 {
     //游戏准备
+    SetConsoleOutputCP(CP_UTF8);   // 源码与字符串均为 UTF-8，统一控制台输出编码，避免中文乱码
     srand((int)time(0));    //随机种子
     HideCursor();    //隐藏光标
     
